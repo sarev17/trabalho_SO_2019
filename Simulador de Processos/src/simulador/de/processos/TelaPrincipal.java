@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -18,7 +20,6 @@ import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import simulador.de.processos.teste.teste;
 
 /**
  *
@@ -38,11 +39,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     ArrayList<Integer> maiorprioridade = new ArrayList();
     private String nome;
+    private int cicloCPU = 0;
     private int PID;
     private int Tchegada;
     private int Ciclos;
     private int Prioridade;
-    private long tempo;
+    private int tempo = 0; //valor dos ciclos
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,7 +86,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jTableterminado = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableexecutando = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
@@ -294,6 +295,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jLabelvalorciclos.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabelvalorciclos.setText("002");
+        jLabelvalorciclos.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jLabelvalorciclosPropertyChange(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -360,16 +366,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jTableterminado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTableterminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "PID", "Nome", "Prioriade", "T.Chegg.", "Ciclos", "T.Saida", "Ciclo Rest"
@@ -391,14 +388,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTableexecutando);
 
         getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, -1, 186));
-
-        jButton1.setText("teste");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 100, -1, -1));
 
         jMenuBar1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -437,18 +426,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
 
-    private void jSliderciclosStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSliderciclosStateChanged
-        // TODO add your handling code here:
-
-        try {
-            jLabelciclos.setText(String.valueOf(jSliderciclos.getValue()));
-        } catch (Exception e) {
-
-        }
-
-
-    }//GEN-LAST:event_jSliderciclosStateChanged
-
     private void brterminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_brterminarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_brterminarActionPerformed
@@ -456,69 +433,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void btINIciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btINIciarActionPerformed
         // TODO add your handling code here:
 
-        double inicio = System.currentTimeMillis();
+        //maiorprioridade.clear();//limpando a vetor com as prioriades              
+
+        String esc = TPJBEscalo.getSelectedItem().toString();
         
-        maiorprioridade.clear();//limpando a vetor com as prioriades
-
-        if (TPProcessadores.getValue() != null) {
-            //Enviando processos para Prontos
-            for (int i = 0; i < jTableprocessos.getRowCount(); i++) {
-                for (int j = 0; j < jTableprocessos.getColumnCount(); j++) {  
-              
-                    jTableprontos.setValueAt(jTableprocessos.getValueAt(i, j), i, j);
-                    
-                    jTableprontos.setValueAt(((System.currentTimeMillis())-inicio), i, 3);
-                    if (j == 2) {
-                        maiorprioridade.add(Integer.parseInt(jTableprocessos.getValueAt(i, j).toString()));
-                    }
-                }
-            }
-
-            Collections.sort(maiorprioridade);
-            Collections.reverse(maiorprioridade);
-
-            JOptionPane.showMessageDialog(null, maiorprioridade);
-
-            //Ordenando a tabela de Prontos por prioriade;
-            TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTableprontos.getModel());
-            jTableprontos.setRowSorter(sorter);
-            ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<>();
-            int columnIndexToSort = 2;
-            sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.DESCENDING));
-            sorter.setSortKeys(sortKeys);
-
-            JOptionPane.showMessageDialog(null, jTableprontos.getValueAt(0, 2).toString());
-
-            DefaultTableModel excluirLinha = (DefaultTableModel) jTableprontos.getModel();
-            DefaultTableModel addExecutando = (DefaultTableModel) jTableexecutando.getModel();
-
-            int processadores = Integer.parseInt(TPProcessadores.getValue().toString());
-            while (processadores > 0) {
-                int t = 0;
-                //obtendo a linha com maior prioridade
-                while (Integer.parseInt(excluirLinha.getValueAt(t, 2).toString()) != maiorprioridade.get(0)) {
-                    t++;
-                }
-                JOptionPane.showMessageDialog(null, "Tabela =" + Integer.parseInt(excluirLinha.getValueAt(t, 2).toString())
-                        + " Vetor =" + maiorprioridade.get(0) + "linha = " + t);
-
-                Object[] exec = {excluirLinha.getValueAt(t, 0),
-                    excluirLinha.getValueAt(t, 1),
-                    excluirLinha.getValueAt(t, 2),
-                    excluirLinha.getValueAt(t, 3),
-                    excluirLinha.getValueAt(t, 4),
-                    excluirLinha.getValueAt(t, 5),
-                    excluirLinha.getValueAt(t, 6)};
-                addExecutando.addRow(exec);
-                excluirLinha.removeRow(t);
-                maiorprioridade.remove(0);
-                processadores--;
-            }
-        } else {
-            JOptionPane.showMessageDialog(rootPane, "Insira a quantidade de processadores");
-            TPProcessadores.requestFocus();
-        }
-
+        switch(esc){
+            case "FIFO":
+                FIFO();
+                break;
+            case "SJF":
+                SJF();
+                break;
+                
+    }
+        
+       
 
     }//GEN-LAST:event_btINIciarActionPerformed
 
@@ -538,7 +467,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             Object[] dados = {PID = jInserir.getjPID(),
                 nome = jInserir.getJnome(),
                 Prioridade = jInserir.getjPrioridade(),
-                Tchegada = jInserir.getjTchegada(),
+                Tchegada = (int) tempo,
                 Ciclos = jInserir.getjCiclos(),
                 0, Ciclos};
             novoProcesso.addRow(dados);
@@ -552,7 +481,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-
+        clock();
 
     }//GEN-LAST:event_formWindowOpened
 
@@ -560,16 +489,65 @@ public class TelaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_TPProcessadoresActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jSliderciclosStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSliderciclosStateChanged
         // TODO add your handling code here:
-        
-        teste t = new teste();
-        t.teste();
-        
-        
-        
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+
+        try {
+            jLabelciclos.setText(String.valueOf(jSliderciclos.getValue()));
+
+            cicloCPU = Integer.parseInt(jLabelciclos.getText());
+
+        } catch (Exception e) {
+
+        }
+    }//GEN-LAST:event_jSliderciclosStateChanged
+
+    private void jLabelvalorciclosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jLabelvalorciclosPropertyChange
+        // TODO add your handling code here:
+
+        if (jTableexecutando.getRowCount() > 0) {
+            if (jTableexecutando.getValueAt(0, 0) != null) {
+                int ciclorest = Integer.parseInt(jTableexecutando.getValueAt(0, 6).toString());
+                if (ciclorest > 0) {
+                    jTableexecutando.setValueAt(ciclorest - cicloCPU, 0, 6);
+                } else {
+
+                    DefaultTableModel excluirLinha = (DefaultTableModel) jTableexecutando.getModel();
+                    DefaultTableModel addTerminado = (DefaultTableModel) jTableterminado.getModel();
+                    Object[] exec = {excluirLinha.getValueAt(0, 0),
+                        excluirLinha.getValueAt(0, 1),
+                        excluirLinha.getValueAt(0, 2),
+                        excluirLinha.getValueAt(0, 3),
+                        excluirLinha.getValueAt(0, 4),
+                        excluirLinha.getValueAt(0, 5),
+                        excluirLinha.getValueAt(0, 6)};
+                    addTerminado.addRow(exec);
+
+                    //int cheg = Integer.parseInt(jTableterminado.getValueAt(0, 3).toString());
+                    //jTableterminado.setValueAt(tempo - cheg, 0, 5);
+                    excluirLinha.removeRow(0);
+
+                    if (jTableprontos.getRowCount() > 0) {
+
+                        DefaultTableModel excluirProntp = (DefaultTableModel) jTableprontos.getModel();
+                        DefaultTableModel addExecutando = (DefaultTableModel) jTableexecutando.getModel();
+                        Object[] exec2 = {excluirProntp.getValueAt(0, 0),
+                            excluirProntp.getValueAt(0, 1),
+                            excluirProntp.getValueAt(0, 2),
+                            excluirProntp.getValueAt(0, 3),
+                            excluirProntp.getValueAt(0, 4),
+                            excluirProntp.getValueAt(0, 5),
+                            excluirProntp.getValueAt(0, 6)};
+                        addExecutando.addRow(exec2);
+                        excluirProntp.removeRow(0);
+
+                    }
+
+                }
+            }
+        }
+
+    }//GEN-LAST:event_jLabelvalorciclosPropertyChange
 
     /**
      * @param args the command line arguments
@@ -602,8 +580,28 @@ public class TelaPrincipal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new TelaPrincipal().setVisible(true);
+
             }
         });
+    }
+
+    public void clock() {
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+
+                    jLabelvalorciclos.setText(tempo + "");
+                    tempo++;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+        }.start();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -613,7 +611,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton brterminar;
     private javax.swing.JButton btINIciar;
     private javax.swing.JButton btsalvar;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -658,5 +655,111 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public void setTPProcessadores(javax.swing.JFormattedTextField TPProcessadores) {
         this.TPProcessadores = TPProcessadores;
     }
+    
+    
+    public void FIFO(){
+         cicloCPU = Integer.parseInt(jLabelciclos.getText());
+        //JOptionPane.showMessageDialog(null, cicloCPU);
+
+        if (TPProcessadores.getValue() != null) {
+            //Enviando processos para Prontos
+            for (int i = 0; i < jTableprocessos.getRowCount(); i++) {
+                for (int j = 0; j < jTableprocessos.getColumnCount(); j++) {
+
+                    jTableprontos.setValueAt(jTableprocessos.getValueAt(i, j), i, j);
+                    
+                }
+                jTableprontos.setValueAt(tempo, i, 3);
+            }
+
+           
+            DefaultTableModel excluirLinha = (DefaultTableModel) jTableprontos.getModel();
+            DefaultTableModel addExecutando = (DefaultTableModel) jTableexecutando.getModel();
+
+            int processadores = Integer.parseInt(TPProcessadores.getValue().toString());
+            while (processadores > 0) {
+                int t = 0;
+          
+                Object[] exec = {excluirLinha.getValueAt(t, 0),
+                    excluirLinha.getValueAt(t, 1),
+                    excluirLinha.getValueAt(t, 2),
+                    excluirLinha.getValueAt(t, 3),
+                    excluirLinha.getValueAt(t, 4),
+                    excluirLinha.getValueAt(t, 5),
+                    excluirLinha.getValueAt(t, 6)};
+                addExecutando.addRow(exec);
+                excluirLinha.removeRow(t);
+              
+                processadores--;
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Insira a quantidade de processadores");
+            TPProcessadores.requestFocus();
+        }       
+
+    }
+    
+    public void SJF(){
+    
+         cicloCPU = Integer.parseInt(jLabelciclos.getText());
+        //JOptionPane.showMessageDialog(null, cicloCPU);
+
+        if (TPProcessadores.getValue() != null) {
+            //Enviando processos para Prontos
+            for (int i = 0; i < jTableprocessos.getRowCount(); i++) {
+                for (int j = 0; j < jTableprocessos.getColumnCount(); j++) {
+
+                    jTableprontos.setValueAt(jTableprocessos.getValueAt(i, j), i, j);
+                    if (j == 4) {
+                       maiorprioridade.add(Integer.parseInt(jTableprocessos.getValueAt(i, j).toString()));
+                    }
+                }
+                jTableprontos.setValueAt(tempo, i, 3);
+            }
+
+             Collections.sort(maiorprioridade);
+            //Collections.reverse(maiorprioridade);
+            //JOptionPane.showMessageDialog(null, maiorprioridade);
+            //Ordenando a tabela de Prontos por prioriade;
+            TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTableprontos.getModel());
+            jTableprontos.setRowSorter(sorter);
+            ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<>();
+            int columnIndexToSort = 4;
+            sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.DESCENDING));
+            sorter.setSortKeys(sortKeys);
+            DefaultTableModel excluirLinha = (DefaultTableModel) jTableprontos.getModel();
+            DefaultTableModel addExecutando = (DefaultTableModel) jTableexecutando.getModel();
+
+            int processadores = Integer.parseInt(TPProcessadores.getValue().toString());
+            while (processadores > 0) {
+                int t = 0;
+                //obtendo a linha com maior prioridade
+                 while (Integer.parseInt(excluirLinha.getValueAt(t, 4).toString()) > maiorprioridade.get(0)) {
+                    t++;
+                }
+               // JOptionPane.showMessageDialog(null, "Tabela =" + Integer.parseInt(excluirLinha.getValueAt(t, 4).toString())
+                 //     + " Vetor =" + maiorprioridade.get(0) + "linha = " + t);
+
+                Object[] exec = {excluirLinha.getValueAt(t, 0),
+                    excluirLinha.getValueAt(t, 1),
+                    excluirLinha.getValueAt(t, 2),
+                    excluirLinha.getValueAt(t, 3),
+                    excluirLinha.getValueAt(t, 4),
+                    excluirLinha.getValueAt(t, 5),
+                    excluirLinha.getValueAt(t, 6)};
+                addExecutando.addRow(exec);
+                excluirLinha.removeRow(t);
+                maiorprioridade.remove(0);
+                processadores--;
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Insira a quantidade de processadores");
+            TPProcessadores.requestFocus();
+        }       
+        
+        
+    }
+        
+    
 
 }
