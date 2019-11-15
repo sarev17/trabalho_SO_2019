@@ -5,16 +5,11 @@
  */
 package simulador.de.processos;
 
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
@@ -719,7 +714,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
              Collections.sort(maiorprioridade);
             //Collections.reverse(maiorprioridade);
-            //JOptionPane.showMessageDialog(null, maiorprioridade);
+            JOptionPane.showMessageDialog(null, maiorprioridade);
             //Ordenando a tabela de Prontos por prioriade;
             TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTableprontos.getModel());
             jTableprontos.setRowSorter(sorter);
@@ -737,8 +732,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                  while (Integer.parseInt(excluirLinha.getValueAt(t, 4).toString()) > maiorprioridade.get(0)) {
                     t++;
                 }
-               // JOptionPane.showMessageDialog(null, "Tabela =" + Integer.parseInt(excluirLinha.getValueAt(t, 4).toString())
-                 //     + " Vetor =" + maiorprioridade.get(0) + "linha = " + t);
+                JOptionPane.showMessageDialog(null, "Tabela =" + Integer.parseInt(excluirLinha.getValueAt(t, 4).toString())
+                      + " Vetor =" + maiorprioridade.get(0) + "linha = " + t);
 
                 Object[] exec = {excluirLinha.getValueAt(t, 0),
                     excluirLinha.getValueAt(t, 1),
@@ -751,6 +746,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 excluirLinha.removeRow(t);
                 maiorprioridade.remove(0);
                 processadores--;
+              
+         
+            
+                
             }
         } else {
             JOptionPane.showMessageDialog(rootPane, "Insira a quantidade de processadores");
