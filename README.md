@@ -40,4 +40,3 @@
 
 ![](https://github.com/sarev17/trabalho_SO_2019/blob/master/Simulador%20de%20Processos/src/simulador/de/processos/Video_1589223276.gif)
 
-## Licença
