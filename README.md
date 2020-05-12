@@ -19,15 +19,25 @@
   Demonstrar de forma didática como funciona os principais escalonadores de processos (FIFO,SJF e Round Robin)
 
 ## Funcionalidades
+
 ### Configurações
-![](https://github.com/sarev17/trabalho_SO_2019/blob/master/Simulador%20de%20Processos/src/simulador/de/processos/tabelas.PNG)
+![](https://github.com/sarev17/trabalho_SO_2019/blob/master/Simulador%20de%20Processos/src/simulador/de/processos/config.PNG)
 
 - Botão adicionar: Cria um novo processo e adiciona a tabela "processos"
 - Política de escalonamento: Determina quais processos serão executados e de que forma
 - Nº de processadores: Simula os núclueos de um processador, ou seja, determina quantos processoa serão executados ao mesmo tempo
 - Ciclos de CPU: Dita quantas intruções serão processadas por unidade de tempo
 
+### Tabelas
+![](https://github.com/sarev17/trabalho_SO_2019/blob/master/Simulador%20de%20Processos/src/simulador/de/processos/tabelas.PNG)
+
+- Processos: Exibe os processos que estão esperando para serem executados
+- Prontos: Processos que estão adicionados na fila do escalonador
+- Executando: Processos que estão no processador
+- Terminados: Processos concluidos
 
 ## Funcionamento
 
+![](https://github.com/sarev17/trabalho_SO_2019/blob/master/Simulador%20de%20Processos/src/simulador/de/processos/Video_1589223276.gif)
 
+## Licença
